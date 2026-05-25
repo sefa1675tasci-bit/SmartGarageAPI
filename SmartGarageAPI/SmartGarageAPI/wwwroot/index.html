@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Garage Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f172a;
+            color: white;
+            font-family: Arial;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #22c55e;
+            margin-bottom: 30px;
+            font-size: 55px;
+        }
+
+        .card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .item {
+            margin: 20px 0;
+            font-size: 22px;
+        }
+
+        .label {
+            color: #cbd5e1;
+        }
+
+        .value {
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🚗 Smart Garage</h1>
+
+        <div class="card">
+
+            <div class="item">
+                <span class="label">RPM:</span>
+                <span class="value" id="rpm">Bekleniyor...</span>
+            </div>
+
+            <div class="item">
+                <span class="label">Temperature:</span>
+                <span class="value" id="temperature">Bekleniyor...</span>
+            </div>
+
+            <div class="item">
+                <span class="label">Speed:</span>
+                <span class="value" id="speed">Bekleniyor...</span>
+            </div>
+
+            <div class="item">
+                <span class="label">Fuel:</span>
+                <span class="value" id="fuel">Bekleniyor...</span>
+            </div>
+
+            <div class="item">
+                <span class="label">Health Score:</span>
+                <span class="value" id="health">Bekleniyor...</span>
+            </div>
+
+            <div class="item">
+                <span class="label">Status:</span>
+                <span class="value" id="status">Bekleniyor...</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+    <script>
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/telemetryHub")
+            .build();
+
+        connection.on("ReceiveTelemetry", (data) => {
+
+            console.log("GELEN DATA:", data);
+
+            document.getElementById("rpm").innerText = data.rpm;
+            document.getElementById("temperature").innerText = data.temperature;
+            document.getElementById("speed").innerText = data.speed;
+            document.getElementById("fuel").innerText = data.fuelLevel;
+            document.getElementById("health").innerText = data.healthScore;
+            document.getElementById("status").innerText = data.status;
+
+        });
+
+        connection.start()
+            .then(() => {
+                console.log("SignalR Connected");
+            })
+            .catch(err => console.error(err));
+
+    </script>
+
+</body>
+</html>
